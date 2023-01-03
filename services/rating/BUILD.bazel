@@ -1,0 +1,60 @@
+load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("//third-party/docker:image.bzl","JAVA_DEFAULT_BASE", "REGISTRY")
+
+package(default_visibility = ["//visibility:public"])
+
+java_binary(
+    name = "server",
+    srcs = glob(
+        ["src/main/java/**/*.java"],
+    ),
+    main_class = "com.github.alandiegosantos.monorepo.services.rating.GrpcServer",
+    resources = glob(
+        ["src/main/resources/**"],
+    ),
+    runtime_deps = [
+        "@io_grpc_grpc_java//netty",
+    ],
+    deps = [
+        "//proto/rating:java",
+        "//proto/rating:java_proto",
+        "@com_google_protobuf//:protobuf_java",
+        "@com_google_protobuf//:protobuf_java_util",
+        "@io_grpc_grpc_java//api",
+        "@io_grpc_grpc_java//protobuf",
+        "@io_grpc_grpc_java//services:health",
+        "@io_grpc_grpc_java//services:reflection",
+        "@io_grpc_grpc_java//stub",
+        "@io_grpc_grpc_java//xds",
+        "@io_grpc_grpc_proto//:health_java_proto",
+    ],
+)
+
+java_image(
+    name = "image",
+    srcs = glob(
+        ["src/main/java/**/*.java"],
+    ),
+    base = JAVA_DEFAULT_BASE,
+    main_class = "com.github.alandiegosantos.monorepo.services.rating.GrpcServer",
+    resources = glob(
+        ["src/main/resources/**"],
+    ),
+    runtime_deps = [
+        "@io_grpc_grpc_java//netty",
+    ],
+    deps = [
+        "//proto/rating:java",
+        "//proto/rating:java_proto",
+        "@com_google_protobuf//:protobuf_java",
+        "@com_google_protobuf//:protobuf_java_util",
+        "@io_grpc_grpc_java//api",
+        "@io_grpc_grpc_java//protobuf",
+        "@io_grpc_grpc_java//services:health",
+        "@io_grpc_grpc_java//services:reflection",
+        "@io_grpc_grpc_java//stub",
+        "@io_grpc_grpc_java//xds",
+        "@io_grpc_grpc_proto//:health_java_proto",
+    ],
+)

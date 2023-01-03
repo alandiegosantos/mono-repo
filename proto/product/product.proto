@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.github.alandiegosantos.monorepo.proto.product";
+option java_outer_classname = "ProductProto";
+option objc_class_prefix = "GTR";
+option go_package = "github.com/alandiegosantos/monorepo/proto/product";
+
+package product;
+
+import "google/api/annotations.proto";
+import "proto/detail/detail.proto";
+import "proto/review/review.proto";
+
+message ProductRequest {
+  string id = 1;
+}
+
+message Product {
+  string id=1;
+  detail.Detail detail=2;
+  repeated review.Review reviews=3;
+}
+
+service ProductService {
+  rpc GetProduct (ProductRequest) returns (Product) {
+    option (google.api.http) = {
+			get: "/v1/product/{id}"
+		};
+  }
+}

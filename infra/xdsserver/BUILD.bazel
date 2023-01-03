@@ -1,0 +1,9 @@
+alias(
+    name = "image",
+    actual = "//infra/xdsserver/cmd/server:image",
+)
+
+alias(
+    name = "deploy",
+    actual = "//infra/xdsserver/k8s:deploy.apply",
+)

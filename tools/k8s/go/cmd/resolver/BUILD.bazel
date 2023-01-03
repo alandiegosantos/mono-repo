@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("//third-party/docker:image.bzl", "GO_DEFAULT_BASE")
+
+package(default_visibility = ["//visibility:public"])
+
+go_binary(
+    name = "resolver",
+    embed = [":lib"],
+    pure = "on",
+)
+
+go_library(
+    name = "lib",
+    srcs = glob(["*.go"]),
+    importpath = "github.com/alandiegosantos/monorepo/tools/k8s/go/cmd/resolver",
+    deps = [
+        "//tools/k8s/go/pkg/resolver:go_default_library",
+    ],
+)

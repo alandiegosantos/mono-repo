@@ -1,0 +1,56 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("//third-party/docker:image.bzl", "GO_DEFAULT_BASE")
+
+package(default_visibility = ["//visibility:public"])
+
+go_binary(
+    name = "server",
+    embed = [":lib"],
+    pure = "on",
+)
+
+go_library(
+    name = "lib",
+    srcs = glob(["*.go"]),
+    importpath = "github.com/alandiegosantos/monorepo/infra/xdsserver/cmd/server",
+    deps = [
+        "//common/go/goinit",
+        "//common/go/net:go_default_library",
+        "//infra/xdsserver/pkg/registry:go_default_library",
+        "//infra/xdsserver/pkg/registry/datasource:go_default_library",
+        "//infra/xdsserver/pkg/xds/hash:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/config/cluster/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/config/core/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/config/endpoint/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/config/listener/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/config/route/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/extensions/filters/http/router/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/extensions/filters/network/http_connection_manager/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/service/cluster/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/service/discovery/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/service/endpoint/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//envoy/service/route/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//pkg/cache/types:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//pkg/cache/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//pkg/resource/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//pkg/server/v3:go_default_library",
+        "@com_github_envoyproxy_go_control_plane//pkg/wellknown:go_default_library",
+        "@com_github_pkg_errors//:go_default_library",
+        "@com_github_sirupsen_logrus//:go_default_library",
+        "@io_opentelemetry_go_contrib_instrumentation_google_golang_org_grpc_otelgrpc//:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//health:go_default_library",
+        "@org_golang_google_grpc//health/grpc_health_v1:go_default_library",
+        "@org_golang_google_protobuf//types/known/anypb:go_default_library",
+        "@org_golang_google_protobuf//types/known/wrapperspb:go_default_library",
+        "@org_golang_x_sync//errgroup:go_default_library",
+    ],
+)
+
+go_image(
+    name = "image",
+    base = GO_DEFAULT_BASE,
+    embed = [":lib"],
+    pure = "on",
+)

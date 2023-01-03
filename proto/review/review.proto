@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.github.alandiegosantos.monorepo.proto.review";
+option java_outer_classname = "ReviewProto";
+option objc_class_prefix = "GTR";
+option go_package = "github.com/alandiegosantos/monorepo/proto/review";
+
+package review;
+
+import "proto/rating/rating.proto";
+
+message ReviewRequest {
+    string id = 1;
+}
+
+message Review {
+    string id = 1;
+    string review = 2;
+    rating.Rating rating = 3;
+}
+
+message ReviewProductRequest {
+  string productId = 1;
+}
+
+message ReviewProductResponse {
+  repeated Review reviews = 1;
+}
+
+service ReviewService {
+  rpc GetReview (ReviewRequest) returns (Review) {}
+  rpc GetReviewForProduct (ReviewProductRequest) returns (ReviewProductResponse) {}
+}

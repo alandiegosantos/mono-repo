@@ -1,0 +1,13 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+
+package(default_visibility = ["//visibility:public"])
+
+container_image(
+    name = "python3_nonroot_arm64_debian11",
+    base = "@com_github_googlecontainertools_distroless//experimental/python3:python3_nonroot_arm64_debian11",
+    debs = [
+        "@arm64_libc-bin//file",
+        "@arm64_libc6//file",
+        "@arm64_libstdcpp6//file",
+    ]
+)

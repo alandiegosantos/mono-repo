@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.github.alandiegosantos.monorepo.proto.infra";
+option java_outer_classname = "XdsConfigProto";
+option objc_class_prefix = "GTR";
+option go_package = "github.com/alandiegosantos/monorepo/proto/infra";
+
+package xds;
+
+import "envoy/config/core/v3/base.proto";
+
+message ChannelCredential {
+
+    enum ChannelCredentialType {
+        invalid = 0;
+        insecure = 1;
+        secure = 2;
+    }
+
+    ChannelCredentialType Type=1 [json_name="type"];
+    string Name=2;
+}
+
+message XDSServer {
+
+    enum ServerFeature {
+        xds_v2 = 0;
+        xds_v3 = 1;
+    }
+    string ServerUri=1 [json_name="server_uri"];
+    repeated ServerFeature ServerFeatures=2 [json_name="server_features"];
+    repeated ChannelCredential ChannelCreds=3 [json_name="channel_creds"];
+}
+
+message Bootstrap {
+    envoy.config.core.v3.Node node=1;
+    string ServerListenerResourceNameTemplate=2 [json_name="server_listener_resource_name_template"];
+    repeated XDSServer XDSServers=3 [json_name="xds_servers"];
+}

@@ -1,0 +1,28 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
+load("//third-party/docker:image.bzl", "PYTHON_DEFAULT_BASE")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "server",
+    srcs = glob(["src/**/*.py"]),
+    python_version = "PY3",
+    deps = [
+        "//proto/rating:python",
+        "//proto/review:python",
+        "@pypi_grpcio//:pkg",
+    ],
+)
+
+py3_image(
+    name = "image",
+    srcs = glob(["src/**/*.py"]),
+    base = PYTHON_DEFAULT_BASE,
+    main = "src/server.py",
+    deps = [
+        "//proto/rating:python",
+        "//proto/review:python",
+        "@pypi_grpcio//:pkg",
+    ],
+)

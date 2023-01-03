@@ -1,0 +1,26 @@
+{
+    "xds_servers": [
+        {
+            "server_uri": "localhost:50050",
+            "channel_creds": [
+                {
+                    "type": "insecure"
+                }
+            ],
+            "server_features": [
+                "xds_v3"
+            ]
+        }
+    ],
+    "server_listener_resource_name_template": "%s",
+    "node": {
+        "id": "node_1",
+        "cluster": "service_1",
+        "locality": {
+            "zone": "us-central1-a"
+        },
+        "metadata": {
+            "IP_ADDRESS": "127.0.0.1"
+        }
+    }
+}

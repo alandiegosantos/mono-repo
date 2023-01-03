@@ -1,0 +1,41 @@
+diff --git a/xds/BUILD.bazel b/xds/BUILD.bazel
+index 6e228e636..d5d9d6099 100644
+--- a/xds/BUILD.bazel
++++ b/xds/BUILD.bazel
+@@ -13,6 +13,15 @@ java_library(
+     ],
+ )
+
++java_proto_library(
++    name = "rpc_java_proto",
++    deps = [
++        "@com_google_googleapis//google/rpc:code_proto",
++        "@com_google_googleapis//google/rpc:error_details_proto",
++        "@com_google_googleapis//google/rpc:status_proto",
++    ],
++)
++
+ java_library(
+     name = "xds",
+     srcs = glob(
+@@ -32,6 +41,7 @@ java_library(
+         ":envoy_service_load_stats_v2_java_grpc",
+         ":envoy_service_load_stats_v3_java_grpc",
+         ":envoy_service_status_v3_java_grpc",
++        ":rpc_java_proto",
+         ":xds_protos_java",
+         "//:auto_value_annotations",
+         "//alts",
+@@ -44,11 +54,11 @@ java_library(
+         "@com_google_code_findbugs_jsr305//jar",
+         "@com_google_code_gson_gson//jar",
+         "@com_google_errorprone_error_prone_annotations//jar",
+-        "@com_google_googleapis//google/rpc:rpc_java_proto",
+         "@com_google_guava_guava//jar",
+         "@com_google_protobuf//:protobuf_java",
+         "@com_google_protobuf//:protobuf_java_util",
+         "@com_google_re2j_re2j//jar",
++        "@maven//:org_apache_tomcat_annotations_api",
+         "@io_netty_netty_buffer//jar",
+         "@io_netty_netty_codec//jar",
+         "@io_netty_netty_common//jar",

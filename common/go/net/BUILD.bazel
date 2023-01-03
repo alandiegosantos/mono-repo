@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+package(default_visibility = ["//visibility:public"])
+
+go_library(
+    name = "go_default_library",
+    srcs = glob(["*.go"]),
+    importpath = "github.com/alandiegosantos/monorepo/common/go/net",
+    deps = select({
+        "@platforms//os:linux": [
+            "@org_kernel_pub_linux_libs_security_libcap_cap//:go_default_library",
+        ],
+        "//conditions:default": [],
+    }),
+)

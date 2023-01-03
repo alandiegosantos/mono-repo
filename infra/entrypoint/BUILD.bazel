@@ -1,0 +1,23 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+load("//third-party/docker:image.bzl", "REGISTRY")
+
+package(default_visibility = ["//visibility:public"])
+
+alias(
+    name = "entrypoint",
+    actual = "//infra/entrypoint/cmd/entrypoint:entrypoint",
+)
+
+alias(
+    name = "image",
+    actual = "//infra/entrypoint/cmd/entrypoint:image",
+)
+
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":image",
+    registry = REGISTRY,
+    repository = "infra/entrypoint",
+    tag = "latest",
+)

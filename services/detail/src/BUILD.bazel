@@ -1,0 +1,33 @@
+load("@io_bazel_rules_docker//cc:image.bzl", "cc_image")
+load("//third-party/docker:image.bzl", "CC_DEFAULT_BASE")
+
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])
+
+cc_binary(
+    name = "server",
+    srcs = ["server.cc"],
+    linkstatic = True,
+    linkopts=['-static'],
+    deps = [
+        "//proto/detail:cpp",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_grpc_grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++_reflection",
+    ],
+)
+
+cc_image(
+    name = "image",
+    srcs = ["server.cc"],
+    base = CC_DEFAULT_BASE,
+    linkstatic = True,
+    linkopts=['-static'],
+    deps = [
+        "//proto/detail:cpp",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_grpc_grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++_reflection",
+    ],
+)

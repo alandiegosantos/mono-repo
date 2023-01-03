@@ -1,0 +1,7 @@
+build --@io_bazel_rules_docker//transitions:enable=false
+build --java_runtime_version=remotejdk_11
+build --cxxopt='-std=c++14'
+build --repo_env=JAVA_HOME=../bazel_tools/jdk
+query --repo_env=JAVA_HOME=../bazel_tools/jdk
+
+build:release --stamp --workspace_status_command=./tools/bazel_stamp_vars.sh

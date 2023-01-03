@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.github.alandiegosantos.monorepo.proto.detail";
+option java_outer_classname = "DetailProto";
+option objc_class_prefix = "GTR";
+option go_package = "github.com/alandiegosantos/monorepo/proto/detail";
+
+package detail;
+
+enum Language {
+    ENGLISH = 0;
+    PORTUGUESE = 1;
+    SPANISH = 2;
+    MANDARIM = 3;
+    GERMAN = 4;
+}
+
+enum Type {
+    PAPERBACK = 0;
+    HARDCOVER = 1;
+    KINDLE = 2;
+}
+
+message DetailRequest {
+    string productId = 1;
+}
+
+message Detail {
+    string productId = 1;
+    string author = 2;
+    int32 year = 3;
+    string publisher = 4;
+    string isbn10 = 5;
+    string isbn13 = 6;
+    int32 pages = 7;
+    Language language = 8;
+    Type type = 9;
+}
+
+service DetailService {
+  rpc GetDetail (DetailRequest) returns (Detail) {}
+}

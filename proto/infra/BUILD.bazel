@@ -1,0 +1,50 @@
+load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
+load("@com_github_grpc_grpc//bazel:grpc_build_system.bzl", "grpc_proto_library")
+load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_grpc_library", "py_proto_library")
+load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
+
+package(default_visibility = ["//visibility:public"])
+
+proto_library(
+    name = "proto",
+    srcs = glob(["*.proto"]),
+    deps = ["@envoy_api//envoy/config/core/v3:pkg"],
+)
+
+cc_proto_library(
+    name = "cc_proto",
+    deps = [":proto"],
+)
+
+cc_grpc_library(
+    name = "cpp",
+    srcs = [":proto"],
+    grpc_only = True,
+    deps = [":cc_proto"],
+)
+
+go_proto_library(
+    name = "go",
+    compilers = [
+        "@io_bazel_rules_go//proto:go_proto",
+        "//third-party/go:protoc-gen-go-grpc",
+    ],
+    importpath = "github.com/alandiegosantos/monorepo/proto/infra",
+    protos = [":proto"],
+    deps = [
+        "@com_github_envoyproxy_go_control_plane//envoy/config/core/v3:go_default_library",
+    ],
+)
+
+py_proto_library(
+    name = "py_proto",
+    deps = [":proto"],
+)
+
+py_grpc_library(
+    name = "python",
+    srcs = [":proto"],
+    deps = [":py_proto"],
+)
