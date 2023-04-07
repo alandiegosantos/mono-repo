@@ -33,6 +33,8 @@ class ServerImpl final {
 
   void Run() {
 
+    sleep(5);
+
     std::string server_address = "0.0.0.0:" + std::to_string(FLAGS_port);
 
     XdsServerBuilder builder;

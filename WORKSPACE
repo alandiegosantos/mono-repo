@@ -190,9 +190,10 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
         "org.apache.logging.log4j:log4j-core:2.19.0",
+        "io.netty:netty-all:4.1.87.Final",
     ] + IO_GRPC_GRPC_JAVA_ARTIFACTS,
     generate_compat_repositories = True,
-    # override_targets = IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS,
+    override_targets = IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS,
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2/",

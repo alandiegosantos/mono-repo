@@ -1,0 +1,22 @@
+load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
+
+package(default_visibility = ["//visibility:public"])
+
+sh_binary(
+    name = "install-istio-operator",
+    srcs = ["install_istio_operator.sh"],
+)
+
+k8s_object(
+    name = "ambient",
+    namespace = "istio-system",
+    template = ":istio-operator-ambient.yaml",
+    cluster = "kubernetes",
+)
+
+k8s_object(
+    name = "default",
+    namespace = "istio-system",
+    template = ":istio-operator-default.yaml",
+    cluster = "kubernetes",
+)

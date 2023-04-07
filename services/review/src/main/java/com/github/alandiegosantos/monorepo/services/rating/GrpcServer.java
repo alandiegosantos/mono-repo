@@ -1,4 +1,4 @@
-package com.github.alandiegosantos.monorepo.services.rating;
+package com.github.alandiegosantos.monorepo.services.review;
 
 import io.grpc.InsecureServerCredentials;
 import io.grpc.Server;
@@ -25,7 +25,7 @@ public class GrpcServer {
         HealthStatusManager health = new HealthStatusManager();
         final Server server = XdsServerBuilder.forPort(port, credentials)
             .addService(ProtoReflectionService.newInstance())
-            .addService(new RatingServiceImpl())
+            .addService(new ReviewServiceImpl())
             .addService(health.getHealthService())
             .build()
             .start();

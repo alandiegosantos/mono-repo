@@ -29,7 +29,7 @@ images:
 
 # Mounts are disabled in this example, but can be enabled optionally.
 mounts:
-- location: "~/workspace/personal/mono-repo"
+- location: "$PWD"
   writable: true
 containerd:
   system: true

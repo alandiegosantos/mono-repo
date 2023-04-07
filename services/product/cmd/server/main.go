@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/xds"
+	xdscreds "google.golang.org/grpc/credentials/xds"
 
 	_ "google.golang.org/grpc/grpclog/glogger"
 
@@ -46,7 +47,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
-		grpcServer := xds.NewGRPCServer(grpc.Creds(insecure.NewCredentials()))
+		creds, err := xdscreds.NewServerCredentials(xdscreds.ServerOptions{FallbackCreds: insecure.NewCredentials()})
+		if err != nil {
+			return err
+		}
+		grpcServer := xds.NewGRPCServer(grpc.Creds(creds))
 		products.RegisterProductServiceServer(grpcServer, productsHandler)
 		log.Infof("GRPC server listening on :%d...", *serverPort)
 		return grpcServer.Serve(lis)

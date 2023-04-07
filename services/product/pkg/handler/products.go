@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	detailsAddr = "xds:///detail"
-	reviewsAddr = "xds:///review"
+	detailsAddr = "xds:///detail.services.svc.cluster.local:50050"
+	reviewsAddr = "xds:///review.services.svc.cluster.local:50050"
 )
 
 type productsServer struct {
@@ -30,7 +30,7 @@ func (s *productsServer) GetProduct(ctx context.Context, req *product.ProductReq
 	if err != nil {
 		return nil, errors.Wrap(err, "Error calling detail service")
 	}
-	reviews, err := s.reviewClient.GetReviewForProduct(ctx, &review.ReviewProductRequest{
+	reviews, err := s.reviewClient.GetReviewsForProduct(ctx, &review.ReviewProductRequest{
 		ProductId: "123",
 	})
 	if err != nil {

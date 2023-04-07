@@ -1,60 +1,26 @@
-load("@io_bazel_rules_docker//java:image.bzl", "java_image")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
-load("//third-party/docker:image.bzl","JAVA_DEFAULT_BASE", "REGISTRY")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
+load("//third-party/docker:image.bzl", "PYTHON_DEFAULT_BASE")
 
 package(default_visibility = ["//visibility:public"])
 
-java_binary(
+py_binary(
     name = "server",
-    srcs = glob(
-        ["src/main/java/**/*.java"],
-    ),
-    main_class = "com.github.alandiegosantos.monorepo.services.rating.GrpcServer",
-    resources = glob(
-        ["src/main/resources/**"],
-    ),
-    runtime_deps = [
-        "@io_grpc_grpc_java//netty",
-    ],
+    srcs = glob(["src/**/*.py"]),
+    python_version = "PY3",
     deps = [
-        "//proto/rating:java",
-        "//proto/rating:java_proto",
-        "@com_google_protobuf//:protobuf_java",
-        "@com_google_protobuf//:protobuf_java_util",
-        "@io_grpc_grpc_java//api",
-        "@io_grpc_grpc_java//protobuf",
-        "@io_grpc_grpc_java//services:health",
-        "@io_grpc_grpc_java//services:reflection",
-        "@io_grpc_grpc_java//stub",
-        "@io_grpc_grpc_java//xds",
-        "@io_grpc_grpc_proto//:health_java_proto",
+        "//proto/rating:python",
+        "@pypi_grpcio//:pkg",
     ],
 )
 
-java_image(
+py3_image(
     name = "image",
-    srcs = glob(
-        ["src/main/java/**/*.java"],
-    ),
-    base = JAVA_DEFAULT_BASE,
-    main_class = "com.github.alandiegosantos.monorepo.services.rating.GrpcServer",
-    resources = glob(
-        ["src/main/resources/**"],
-    ),
-    runtime_deps = [
-        "@io_grpc_grpc_java//netty",
-    ],
+    srcs = glob(["src/**/*.py"]),
+    base = PYTHON_DEFAULT_BASE,
+    main = "src/server.py",
     deps = [
-        "//proto/rating:java",
-        "//proto/rating:java_proto",
-        "@com_google_protobuf//:protobuf_java",
-        "@com_google_protobuf//:protobuf_java_util",
-        "@io_grpc_grpc_java//api",
-        "@io_grpc_grpc_java//protobuf",
-        "@io_grpc_grpc_java//services:health",
-        "@io_grpc_grpc_java//services:reflection",
-        "@io_grpc_grpc_java//stub",
-        "@io_grpc_grpc_java//xds",
-        "@io_grpc_grpc_proto//:health_java_proto",
+        "//proto/rating:python",
+        "@pypi_grpcio//:pkg",
     ],
 )
