@@ -23,6 +23,9 @@ spec:
           resources:
             requests:
               memory: 100Mi
+          livenessProbe:
+            grpc:
+              port: 50050
           env:
             - name: NODE_NAME
               valueFrom:

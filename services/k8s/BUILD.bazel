@@ -1,0 +1,12 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("//third-party/docker:image.bzl", "REGISTRY")
+load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
+
+package(default_visibility = ["//visibility:public"])
+
+k8s_object(
+    name = "namespace",
+    namespace = "services",
+    template = ":namespace.yaml",
+    cluster = "kubernetes",
+)

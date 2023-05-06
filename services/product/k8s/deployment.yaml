@@ -11,7 +11,6 @@ spec:
     metadata:
       labels:
         app: product
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: product

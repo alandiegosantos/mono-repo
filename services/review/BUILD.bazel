@@ -1,28 +1,55 @@
-load("@rules_python//python:defs.bzl", "py_binary")
-load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
-load("//third-party/docker:image.bzl", "PYTHON_DEFAULT_BASE")
+load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("//third-party/docker:image.bzl","JAVA_DEFAULT_BASE", "REGISTRY")
 
 package(default_visibility = ["//visibility:public"])
 
-py_binary(
-    name = "server",
-    srcs = glob(["src/**/*.py"]),
-    python_version = "PY3",
+java_library(
+    name = "server_lib",
+    srcs = glob(
+        ["src/main/java/**/*.java"],
+    ),
+    resources = glob(
+        ["src/main/resources/**"],
+    ),
+    runtime_deps = [
+        "@io_grpc_grpc_java//netty:shaded_maven",
+    ],
     deps = [
-        "//proto/rating:python",
-        "//proto/review:python",
-        "@pypi_grpcio//:pkg",
+        "//proto/rating:java",
+        "//proto/rating:java_proto",
+        "//proto/review:java",
+        "//proto/review:java_proto",
+        "@com_google_protobuf//:protobuf_java",
+        "@com_google_protobuf//:protobuf_java_util",
+        "@maven//:io_netty_netty_all",
+        "@maven//:io_netty_netty_transport",
+        "@maven//:io_netty_netty_transport_native_epoll_linux_aarch_64",
+        "@maven//:io_netty_netty_transport_native_unix_common",
+        "@io_grpc_grpc_java//api",
+        "@io_grpc_grpc_java//netty:shaded_maven",
+        "@io_grpc_grpc_java//protobuf",
+        "@io_grpc_grpc_java//services:health",
+        "@io_grpc_grpc_java//services:reflection",
+        "@io_grpc_grpc_java//stub",
+        "@io_grpc_grpc_java//xds",
+        "@io_grpc_grpc_proto//:health_java_proto",
     ],
 )
 
-py3_image(
+java_binary(
+    name = "server",
+    main_class = "com.github.alandiegosantos.monorepo.services.review.GrpcServer",
+    runtime_deps = [
+        ":server_lib",
+    ],
+)
+
+java_image(
     name = "image",
-    srcs = glob(["src/**/*.py"]),
-    base = PYTHON_DEFAULT_BASE,
-    main = "src/server.py",
-    deps = [
-        "//proto/rating:python",
-        "//proto/review:python",
-        "@pypi_grpcio//:pkg",
+    base = JAVA_DEFAULT_BASE,
+    main_class = "com.github.alandiegosantos.monorepo.services.review.GrpcServer",
+    runtime_deps = [
+        ":server_lib",
     ],
 )

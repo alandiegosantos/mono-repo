@@ -30,5 +30,5 @@ message ReviewProductResponse {
 
 service ReviewService {
   rpc GetReview (ReviewRequest) returns (Review) {}
-  rpc GetReviewForProduct (ReviewProductRequest) returns (ReviewProductResponse) {}
+  rpc GetReviewsForProduct (ReviewProductRequest) returns (ReviewProductResponse) {}
 }

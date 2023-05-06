@@ -20,12 +20,11 @@ spec:
           ports:
             - containerPort: 50050
               name: grpc
+            - containerPort: 8080
+              name: http
           resources:
             requests:
               memory: 100Mi
-          livenessProbe:
-            grpc:
-              port: 50050
           env:
             - name: NODE_NAME
               valueFrom:

@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"bytes"
+	encodingjson "encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -33,6 +34,12 @@ type Flags struct {
 	NoPush            bool
 	StampInfoFile     utils.ArrayStringFlags
 	ImgSpecs          utils.ArrayStringFlags
+}
+
+type imgResolveEntry struct {
+	ImageID       string `json:"image_id"`
+	ContainerName string `json:"container"`
+	Image         string `json:"image"`
 }
 
 // Commandline flags
@@ -225,50 +232,51 @@ func (r *Resolver) publishSingle(spec imageSpec, stamper *compat.Stamper) (strin
 func (r *Resolver) templateDeployment(deployment *appsv1.Deployment) (*appsv1.Deployment, error) {
 	deployment = deployment.DeepCopy()
 
+	if deployment.GetAnnotations() == nil {
+		deployment.Annotations = make(map[string]string)
+	}
+
+	if deployment.Spec.Template.GetAnnotations() == nil {
+		deployment.Spec.Template.Annotations = make(map[string]string)
+	}
+
+	resolvedImages := make([]imgResolveEntry, 0, len(deployment.Spec.Template.Spec.Containers))
+
 	containers := deployment.Spec.Template.Spec.Containers
 	for i := range containers {
 		image, err := r.resolveImage(containers[i].Image)
 		if err != nil {
 			return nil, err
 		}
+		resolvedImages = append(resolvedImages,
+			imgResolveEntry{
+				ImageID:       containers[i].Image,
+				ContainerName: containers[i].Name,
+				Image:         image,
+			},
+		)
 		containers[i].Image = image
 
-		containers[i].VolumeMounts = append(
-			containers[i].VolumeMounts,
-			grpcXdsBootstrapVolumeMount(true),
-		)
-
-		containers[i].Env = append(
-			containers[i].Env,
-			grpcXdsBootstrapEnv(),
-		)
 	}
 
-	initContainers := deployment.Spec.Template.Spec.InitContainers
-	for i := range initContainers {
-		image, err := r.resolveImage(initContainers[i].Image)
+	{
+		overrideAnnotations, err := encodingjson.Marshal(resolvedImages)
 		if err != nil {
 			return nil, err
 		}
-		initContainers[i].Image = image
+		deployment.Annotations["mono-repo/overrides"] = string(overrideAnnotations)
 	}
 
-	deployment.Spec.Template.Spec.InitContainers = append(initContainers,
-		entrypointInitContainer(),
-	)
+	// TODO: Check the possibility of importing istio code directly
+	// and running a single resolver
 
-	deployment.Spec.Template.Spec.Volumes = append(
-		deployment.Spec.Template.Spec.Volumes,
-		corev1.Volume{
-			Name: "grpc-xds",
-			VolumeSource: corev1.VolumeSource{
-				EmptyDir: &corev1.EmptyDirVolumeSource{
-					Medium:    "Memory",
-					SizeLimit: &grpcXdsSizeLimit,
-				},
-			},
-		},
-	)
+	if _, found := deployment.Spec.Template.Annotations["inject.istio.io/templates"]; !found {
+		deployment.Spec.Template.Annotations["inject.istio.io/templates"] = "grpc-agent"
+	}
+
+	if _, found := deployment.Spec.Template.Annotations["proxy.istio.io/config"]; !found {
+		deployment.Spec.Template.Annotations["proxy.istio.io/config"] = "{\"holdApplicationUntilProxyStarts\": true}"
+	}
 
 	return deployment, nil
 }

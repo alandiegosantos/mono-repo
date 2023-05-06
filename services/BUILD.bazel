@@ -1,0 +1,13 @@
+load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
+
+# TODO: Make this smarter
+k8s_objects(
+   name = "deployments",
+   objects = [
+      "//services/k8s:namespace",
+      "//services/product/k8s:deploy",
+      "//services/detail/k8s:deploy",
+      "//services/rating/k8s:deploy",
+      "//services/review/k8s:deploy",
+   ]
+)
