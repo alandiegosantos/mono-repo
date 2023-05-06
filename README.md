@@ -10,16 +10,17 @@ The purpose of this repo is:
 
 ## How to use it
 
-1. (Optional) Create the VM if you are on MacOSX. I used lima, but feel free to use any other tool. The scripts included already bootstrap a k8s cluster and the remaining of the doc assumes that cluster is already in place and configured
-    1 Create the VM
+1. (Optional) Create the VM if you are on MacOSX. I used lima, but feel free to use any other tool. The scripts included already bootstrap a k8s cluster and the remaining of the doc assumes that cluster is already in place and configured:
+
+Create the VM and connect to it:
+
 ```
 $ envsubst < tools/k8s/lima-dev.yaml | limactl start --name=k8s
-```
-    2 Open a terminal inside the VM
-```
 $ limactl shell k8s
 ```
-    3 Configure kubectl
+
+Inside the VM, configure kubectl:
+
 ```
 $ mkdir ~/.kube
 $ sudo cat /etc/kubernetes/admin.conf > ~/.kube/config
