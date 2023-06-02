@@ -15,7 +15,7 @@ The purpose of this repo is:
 Create the VM and connect to it:
 
 ```
-$ envsubst < tools/k8s/lima-dev.yaml | limactl start --name=k8s
+$ envsubst < tools/k8s/lima-dev.yaml | limactl start --name=k8s -
 $ limactl shell k8s
 ```
 
