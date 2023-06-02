@@ -25,7 +25,6 @@ import (
 	_ "github.com/pkg/errors"
 	_ "github.com/prometheus/client_golang/prometheus/promhttp"
 	_ "github.com/sirupsen/logrus"
-	_ "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	_ "golang.org/x/sync/errgroup"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "google.golang.org/grpc"

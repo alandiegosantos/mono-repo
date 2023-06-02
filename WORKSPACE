@@ -1,5 +1,11 @@
 workspace(name = "mono_repo")
 
+load("//tools/bazel:jsonparser.bzl", "load_json_config")
+
+load_json_config(
+    name = "monorepo_k8s_config",
+)
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
@@ -131,6 +137,19 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_k8s/archive/refs/tags/v0.7.tar.gz"],
 )
 
+http_archive(
+    name = "com_adobe_rules_gitops",
+    sha256 = "83124a8056b1e0f555c97adeef77ec6dff387eb3f5bc58f212b376ba06d070dd",
+    strip_prefix = "rules_gitops-0.17.2",
+    urls = ["https://github.com/adobe/rules_gitops/archive/refs/tags/v0.17.2.tar.gz"],
+    patch_args = [
+        "-p1",
+    ],
+    patches = [
+        "//tools/bazel:gitops_arm64.patch",
+    ],
+)
+
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
 rules_proto_dependencies()
@@ -235,6 +254,14 @@ k8s_repositories()
 load("@io_bazel_rules_k8s//k8s:k8s_go_deps.bzl", k8s_go_deps = "deps")
 
 k8s_go_deps(go_version = None)
+
+load("@com_adobe_rules_gitops//gitops:deps.bzl", "rules_gitops_dependencies")
+
+rules_gitops_dependencies()
+
+load("@com_adobe_rules_gitops//gitops:repositories.bzl", "rules_gitops_repositories")
+
+rules_gitops_repositories()
 
 load("//tools/argocd:repos.bzl", "argocd_repos")
 

@@ -5,22 +5,26 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: product
+    matchLabels: {}
   template:
     metadata:
       labels:
-        app: product
+        app_label_image_short_digest: "{{//services/product/cmd/server:image.short-digest}}"
+      annotations:
+        inject.istio.io/templates: grpc-agent
+        proxy.istio.io/config: |
+          {"holdApplicationUntilProxyStarts": true}
     spec:
       containers:
         - name: product
-          image: services/product:latest
+          image: //services/product/cmd/server:image
           args:
             - --port=50050
-            - --logtostderr
           ports:
             - containerPort: 50050
               name: grpc
+            - containerPort: 8080
+              name: http
           resources:
             requests:
               memory: 100Mi
@@ -41,8 +45,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            - name: GRPC_GO_LOG_VERBOSITY_LEVEL
-              value: "trace"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

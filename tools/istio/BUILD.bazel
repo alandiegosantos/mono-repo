@@ -1,4 +1,5 @@
-load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
+load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
+load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -7,16 +8,12 @@ sh_binary(
     srcs = ["install_istio_operator.sh"],
 )
 
-k8s_object(
-    name = "ambient",
-    namespace = "istio-system",
-    template = ":istio-operator-ambient.yaml",
-    cluster = "kubernetes",
-)
-
-k8s_object(
+k8s_deploy(
     name = "default",
+    cluster = CLUSTER,
+    manifests = [
+        "istio-operator-default.yaml",
+    ],
     namespace = "istio-system",
-    template = ":istio-operator-default.yaml",
-    cluster = "kubernetes",
+    user = USER,
 )

@@ -1,0 +1,5 @@
+{
+    "CLUSTER" : "kubernetes",
+    "USER" : "kubernetes-admin",
+    "REGISTRY": "localhost:5000"
+}

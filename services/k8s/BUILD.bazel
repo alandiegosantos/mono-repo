@@ -1,12 +1,12 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
-load("//third-party/docker:image.bzl", "REGISTRY")
-load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
+load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
+load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER")
 
 package(default_visibility = ["//visibility:public"])
 
-k8s_object(
-    name = "namespace",
+k8s_deploy(
+    name = "base",
+    cluster = CLUSTER,
+    manifests = glob(["base/*.yaml"]),
     namespace = "services",
-    template = ":namespace.yaml",
-    cluster = "kubernetes",
+    user = USER,
 )
