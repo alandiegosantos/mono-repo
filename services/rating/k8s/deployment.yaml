@@ -5,16 +5,19 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: rating
+    matchLabels: {}
   template:
     metadata:
       labels:
-        app: rating
+        app_label_image_short_digest: "{{//services/rating:image.short-digest}}"
+      annotations:
+        inject.istio.io/templates: grpc-agent
+        proxy.istio.io/config: |
+          {"holdApplicationUntilProxyStarts": true}
     spec:
       containers:
         - name: rating
-          image: services/rating:latest
+          image: //services/rating:image
           args:
             - --port=50050
           ports:

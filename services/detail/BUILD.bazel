@@ -1,5 +1,5 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_push")
-load("//third-party/docker:image.bzl", "REGISTRY")
+load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER","REGISTRY")
 
 package(default_visibility = ["//visibility:public"])
 

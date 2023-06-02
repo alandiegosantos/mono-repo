@@ -5,5 +5,3 @@ GO_DEFAULT_BASE = "@com_github_googlecontainertools_distroless//cc:cc_nonroot_ar
 CC_DEFAULT_BASE = "@com_github_googlecontainertools_distroless//cc:cc_nonroot_arm64_debian11"
 JAVA_DEFAULT_BASE = "@com_github_googlecontainertools_distroless//java:java11_nonroot_arm64_debian11"
 PYTHON_DEFAULT_BASE = "//third-party/docker:python3_nonroot_arm64_debian11"
-
-REGISTRY = "localhost:5000"

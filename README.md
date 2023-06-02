@@ -15,7 +15,7 @@ The purpose of this repo is:
 Create the VM and connect to it:
 
 ```
-$ envsubst < tools/k8s/lima-dev.yaml | limactl start --name=k8s
+$ envsubst < tools/k8s/lima-dev.yaml | limactl start --name=k8s -
 $ limactl shell k8s
 ```
 
@@ -26,27 +26,26 @@ $ mkdir ~/.kube
 $ sudo cat /etc/kubernetes/admin.conf > ~/.kube/config
 ```
 
-2. Install dependencies:
-```
-$ sudo apt-get update
-$ sudo apt-get install build-essential python3-dev
-$ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-$ sudo snap install go --classic
-$ sudo nerdctl run -d -p 5000:5000 --name registry registry:2 # Creates a local registry to store the local nodes
-$ go install github.com/bazelbuild/bazelisk@latest
-$ export PATH=$PATH:$(go env GOPATH)/bin
-```
-
-3. Install Istio in the cluster:
+2. Install Istio in the cluster:
 ```
 $ cd <project>
 $ bazelisk run //tools/istio:install-istio-operator
 $ bazelisk run //tools/istio:default.apply
 ```
+
+3. Install ArgoCD
+```
+$ cd <project>
+$ bazelisk run //tools/argocd:deploy.apply
+```
 4. Start all services in K8s
 ```
 $ cd <project>
-$ bazelisk run //services:deployments.apply
+$ bazelisk run //services/k8s:base.apply
+$ bazelisk run //services/detail/k8s:release.apply
+$ bazelisk run //services/rating/k8s:release.apply
+$ bazelisk run //services/review/k8s:release.apply
+$ bazelisk run //services/product/k8s:release.apply
 ```
 
 ## Testing the services

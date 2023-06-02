@@ -3,17 +3,13 @@ load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER")
 
 package(default_visibility = ["//visibility:public"])
 
-sh_binary(
-    name = "install-istio-operator",
-    srcs = ["install_istio_operator.sh"],
-)
-
 k8s_deploy(
-    name = "default",
+    name = "deploy",
     cluster = CLUSTER,
     manifests = [
-        "istio-operator-default.yaml",
+        "namespace.yaml",
+        "@argocd_install//file",
     ],
-    namespace = "istio-system",
+    namespace = "argocd",
     user = USER,
 )
