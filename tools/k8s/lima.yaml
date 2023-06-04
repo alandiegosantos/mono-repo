@@ -12,6 +12,8 @@
 # lima-k8s   Ready    control-plane,master   44s   v1.22.3
 
 # This example requires Lima v0.7.0 or later.
+cpus: 8
+memory: 16GB
 images:
 # Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
 - location: "https://cloud-images.ubuntu.com/releases/22.04/release-20221201/ubuntu-22.04-server-cloudimg-amd64.img"
@@ -29,7 +31,7 @@ images:
 
 # Mounts are disabled in this example, but can be enabled optionally.
 mounts:
-- location: "~/workspace/personal/mono-repo"
+- location: "<project>"
   writable: true
 containerd:
   system: true
@@ -58,7 +60,7 @@ provision:
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
     apt-get install -y apt-transport-https ca-certificates curl
-    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/kubernetes-archive-keyring.gpg
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     apt-get update
     # cri-tools
@@ -72,6 +74,22 @@ provision:
     rm -f /etc/cni/net.d/*.conf*
     apt-get install -y kubelet kubeadm kubectl && apt-mark hold kubelet kubeadm kubectl
     systemctl enable --now kubelet
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    BASE_CERT_PATH=/usr/share/mono-repo/certs
+    mkdir -p $BASE_CERT_PATH
+    CERTNAME=monorepo
+    KEYFILE=${BASE_CERT_PATH}/${CERTNAME}.key
+    CERTFILE=${BASE_CERT_PATH}/${CERTNAME}.pem
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get install -y ca-certificates
+    openssl genrsa -out $KEYFILE 4096
+    openssl req -x509 -new -nodes -key $KEYFILE -sha256 -days 1825 -out $CERTFILE -subj "/C=NL/ST=state/L=city/O=example/CN=$CERTNAME"
+    cp $CERTFILE /usr/local/share/ca-certificates/$CERTNAME.crt
+    chmod +r $KEYFILE $CERTFILE
+    update-ca-certificates
 # See <https://kubernetes.io/docs/setup/production-environment/container-runtimes/>
 - mode: system
   script: |
@@ -127,13 +145,27 @@ provision:
     # Control plane node isolation
     kubectl taint nodes --all node-role.kubernetes.io/control-plane-
     sed -e "s/${LIMA_CIDATA_SLIRP_IP_ADDRESS:-192.168.5.15}/127.0.0.1/" -i $KUBECONFIG
-    mkdir -p ${HOME:-/root}/.kube && cp -f $KUBECONFIG ${HOME:-/root}/.kube/config
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get install -y build-essential python3-dev
+    update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+    curl -L https://github.com/bazelbuild/bazelisk/releases/download/v1.15.0/bazelisk-linux-$(dpkg --print-architecture) -o /usr/local/bin/bazelisk
+    chmod +x /usr/local/bin/bazelisk
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    # Register the IP to the registry inside k8s cluster
+    echo "127.0.0.1 registry.infra" >> /etc/hosts
 probes:
 - description: "kubeadm to be installed"
   script: |
     #!/bin/bash
     set -eux -o pipefail
-    if ! timeout 30s bash -c "until command -v kubeadm >/dev/null 2>&1; do sleep 3; done"; then
+    if ! timeout 300s bash -c "until command -v kubeadm >/dev/null 2>&1; do sleep 3; done"; then
       echo >&2 "kubeadm is not installed yet"
       exit 1
     fi
@@ -153,7 +185,8 @@ probes:
   script: |
     #!/bin/bash
     set -eux -o pipefail
-    if ! timeout 300s bash -c "until sudo kubectl version >/dev/null 2>&1; do sleep 3; done"; then
+    export KUBECONFIG=/etc/kubernetes/admin.conf
+    if ! timeout 300s bash -c "until sudo -E kubectl version >/dev/null 2>&1; do sleep 3; done"; then
       echo >&2 "kubernetes cluster is not up and running yet"
       exit 1
     fi

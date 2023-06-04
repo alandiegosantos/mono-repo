@@ -1,6 +1,8 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("//third-party/docker:image.bzl", "PYTHON_DEFAULT_BASE")
+load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
+load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER", "REGISTRY")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -23,4 +25,9 @@ py3_image(
         "//proto/rating:python",
         "@pypi_grpcio//:pkg",
     ],
+)
+
+alias(
+    name="image.push",
+    actual = "//services/rating/k8s:services_rating_image_" + REGISTRY.replace(":","_") + "_image.push",
 )

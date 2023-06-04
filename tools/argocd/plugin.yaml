@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ConfigManagementPlugin
+metadata:
+  name: bazel-plugin
+spec:
+  version: v1.0
+  generate:
+    command: ["/bin/bash", "-c"]
+    args:
+      - |
+        /usr/local/bin/bazelisk run :image.push > /dev/null && /usr/local/bin/bazelisk run k8s:release.show
+  discover:
+    fileName: "./BUILD.bazel"

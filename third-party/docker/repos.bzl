@@ -10,7 +10,10 @@ load(
 load("@com_github_googlecontainertools_distroless//:debian_archives.bzl", debian_archives = "repositories")
 load(":debian_archives.bzl", local_debian_archives = "debian_archives")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
 
 def docker_repos(**kwargs):  # buildifier: disable=function-docstring
     container_repositories()
@@ -22,3 +25,10 @@ def docker_repos(**kwargs):  # buildifier: disable=function-docstring
     debian_archives()
 
     local_debian_archives()
+
+    container_pull(
+        name = "arm64v8_debian",
+        registry = "docker.io",
+        repository = "arm64v8/debian",
+        tag = "11",
+    )

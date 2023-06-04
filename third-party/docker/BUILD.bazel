@@ -6,8 +6,10 @@ container_image(
     name = "python3_nonroot_arm64_debian11",
     base = "@com_github_googlecontainertools_distroless//experimental/python3:python3_nonroot_arm64_debian11",
     debs = [
-        "@arm64_libc-bin//file",
-        "@arm64_libc6//file",
-        "@arm64_libstdcpp6//file",
+        # Python requires the libc 2.36, while other packages for debian 11
+        # still uses 2.31
+        "@arm64_debian11_libc-bin-2_36//file",
+        "@arm64_debian11_libc6//file",
+        "@arm64_debian11_libstdcpp6//file",
     ]
 )
