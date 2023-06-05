@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: review
+spec:
+  destination:
+    name: ''
+    namespace: services
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: services/review
+    repoURL: 'https://github.com/alandiegosantos/mono-repo.git'
+    targetRevision: HEAD
+    plugin:
+      name: bazel-plugin-v1.0
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+    - Validate=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+  sources: []
+  project: default

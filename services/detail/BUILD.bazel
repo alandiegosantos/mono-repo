@@ -1,4 +1,5 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
 load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER","REGISTRY")
 
 package(default_visibility = ["//visibility:public"])
@@ -11,4 +12,20 @@ alias(
 alias(
     name="image",
     actual = "//services/detail/src:image",
+)
+
+alias(
+    name="image.push",
+    actual = "//services/detail/k8s:services_detail_image_" + REGISTRY.replace(":","_") + "_image.push",
+)
+
+k8s_deploy(
+    name = "register_argocd",
+    cluster = CLUSTER,
+    manifests = ["argocd.yaml"],
+    common_labels = {
+        "app": "detail",
+    },
+    namespace = "argocd",
+    user = USER,
 )

@@ -1,0 +1,4 @@
+{
+    "CA_KEY_FILE" : "/usr/share/mono-repo/certs/monorepo.key",
+    "CA_CRT_FILE" : "/usr/share/mono-repo/certs/monorepo.pem"
+}

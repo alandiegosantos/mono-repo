@@ -4,6 +4,12 @@ load("//tools/bazel:jsonparser.bzl", "load_json_config")
 
 load_json_config(
     name = "monorepo_k8s_config",
+    file = "//conf:k8s.json",
+)
+
+load_json_config(
+    name = "mono_certs_config",
+    file = "//conf:certs.json",
 )
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
