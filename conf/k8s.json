@@ -1,5 +1,9 @@
 {
-    "CLUSTER" : "kubernetes",
-    "USER" : "kubernetes-admin",
+    "CLUSTERS": [
+        {
+            "name" : "kind-kind",
+            "user" : "kind-kind"
+        }
+    ],
     "REGISTRY": "registry.infra:30005"
 }

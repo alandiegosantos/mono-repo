@@ -1,7 +1,50 @@
-build --@io_bazel_rules_docker//transitions:enable=false
-build --java_runtime_version=remotejdk_11
-build --cxxopt='-std=c++14'
-build --repo_env=JAVA_HOME=../bazel_tools/jdk
-query --repo_env=JAVA_HOME=../bazel_tools/jdk
+# build --java_runtime_version=remotejdk_11
+# build --cxxopt='-std=c++14'
+# build --host_cxxopt='-std=c++14'
+# build:linux --copt=-Wno-typedef-redefinition
+# build:linux --host_copt=-Wno-typedef-redefinition
+# build --client_env=CC=clang
+# build --copt=-DGRPC_BAZEL_BUILD
+# build --host_copt=-DGRPC_BAZEL_BUILD
+# build --action_env=GRPC_BAZEL_RUNTIME=1
+# build --define=use_fast_cpp_protos=true
+# build:opt --compilation_mode=opt
+# build:opt --copt=-Wframe-larger-than=16384
 
-build:release --stamp --workspace_status_command=./tools/bazel_stamp_vars.sh
+
+# common --repo_env=JAVA_HOME=../bazel_tools/jdk
+# common --enable_bzlmod
+
+# build:release --stamp --workspace_status_command=./tools/bazel_stamp_vars.sh
+
+# bazelrc file
+
+# for platform-appropriate cxxopts
+common --enable_platform_specific_config
+
+build:linux   --cxxopt='-std=c++14'
+build:linux   --host_cxxopt='-std=c++14'
+build:macos   --cxxopt='-std=c++14'
+build:macos   --host_cxxopt='-std=c++14'
+
+# TODO(veblush): Remove these once upb is upgraded to 25.x or later
+build:linux --copt=-Wno-typedef-redefinition
+build:linux --host_copt=-Wno-typedef-redefinition
+build:macos --copt=-Wno-typedef-redefinition
+build:macos --host_copt=-Wno-typedef-redefinition
+
+build --client_env=CC=clang
+build --copt=-DGRPC_BAZEL_BUILD
+build --host_copt=-DGRPC_BAZEL_BUILD
+build --action_env=GRPC_BAZEL_RUNTIME=1
+build --define=use_fast_cpp_protos=true
+
+build:opt --compilation_mode=opt
+build:opt --copt=-Wframe-larger-than=16384
+
+# Dynamic link cause issues like: `dyld: malformed mach-o: load commands size (59272) > 32768`
+# https://github.com/bazelbuild/bazel/issues/9190
+build:macos --dynamic_mode=off
+
+# OpenTelemetry C++ needs this option to build with absl
+build --@io_opentelemetry_cpp//api:with_abseil

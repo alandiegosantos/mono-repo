@@ -1,10 +1,10 @@
 {
-  "go.goroot": "${workspaceFolder}/bazel-mono-repo/external/go_sdk",
+  "go.goroot": "/home/alandiego/.cache/bazel/_bazel_alandiego/cb6caaed813306c8cc70ef48a9b87f3e/external/go_sdk",
   "go.toolsEnvVars": {
     "GOPACKAGESDRIVER": "${workspaceFolder}/third-party/go/tools/gopackagesdriver.sh",
+    "GOROOT": "/home/alandiego/.cache/bazel/_bazel_alandiego/cb6caaed813306c8cc70ef48a9b87f3e/external/go_sdk",
   },
   "go.enableCodeLens": {
-    "references": false,
     "runtest": false
   },
   "gopls": {
@@ -36,7 +36,7 @@
   ],
   "go.useLanguageServer": true,
   "go.buildOnSave": "off",
-  "go.lintOnSave": "off",
-  "go.vetOnSave": "off",
+  "go.lintOnSave": "on",
+  "go.vetOnSave": "on",
   "go.trace.server": "verbose",
 }
