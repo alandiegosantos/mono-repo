@@ -1,4 +1,4 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -9,6 +9,25 @@ go_library(
     deps = select({
         "@platforms//os:linux": [
             "@org_kernel_pub_linux_libs_security_libcap_cap//:go_default_library",
+        ],
+        "//conditions:default": [],
+    }),
+)
+
+go_library(
+    name = "net",
+    srcs = [
+        "listen_darwin.go",
+        "listen_linux.go",
+        "util.go",
+    ],
+    importpath = "",
+    deps = select({
+        "@io_bazel_rules_go//go/platform:android": [
+            "@org_kernel_pub_linux_libs_security_libcap//cap:go_default_library",
+        ],
+        "@io_bazel_rules_go//go/platform:linux": [
+            "@org_kernel_pub_linux_libs_security_libcap//cap:go_default_library",
         ],
         "//conditions:default": [],
     }),

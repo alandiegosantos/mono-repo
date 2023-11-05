@@ -1,34 +1,25 @@
-load(
-    "@io_bazel_rules_docker//repositories:repositories.bzl",
-    container_repositories = "repositories",
-)
-load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
-load(
-    "@io_bazel_rules_docker//go:image.bzl",
-    _go_image_repos = "repositories",
-)
-load("@com_github_googlecontainertools_distroless//:debian_archives.bzl", debian_archives = "repositories")
 load(":debian_archives.bzl", local_debian_archives = "debian_archives")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-load(
-    "@io_bazel_rules_docker//container:container.bzl",
-    "container_pull",
-)
+load("@rules_oci//oci:pull.bzl", "oci_pull")
 
-def docker_repos(**kwargs):  # buildifier: disable=function-docstring
-    container_repositories()
-    container_deps()
+IMAGES = {
+    "static-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+    "base-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+    "cc-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+    "java-base-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+    "java17-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+    "python3-debian12": "sha256:0a944ba09780b6a4e7a8f30287f88a70d7914ad2ba878233ff8cfffb7479158c",
+}
 
-    # go_images is loaded here because docker_repos depends on go_repos
-    _go_image_repos()
 
-    debian_archives()
+def docker_repos(**kwargs):
 
-    local_debian_archives()
-
-    container_pull(
-        name = "arm64v8_debian",
-        registry = "docker.io",
-        repository = "arm64v8/debian",
-        tag = "11",
-    )
+    for image, digest in IMAGES.items():
+        oci_pull(
+            name = image,
+            digest = digest,
+            image = "gcr.io/distroless/" + image,
+            platforms = [
+                "linux/amd64",
+            ],
+        )

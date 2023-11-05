@@ -1,0 +1,13 @@
+diff --git a/pkg/util/net/http.go b/pkg/util/net/http.go
+index 8cc1810a..727fd268 100644
+--- a/pkg/util/net/http.go
++++ b/pkg/util/net/http.go
+@@ -172,7 +172,7 @@ func pingTimeoutSeconds() int {
+ }
+ 
+ func configureHTTP2Transport(t *http.Transport) error {
+-	t2, err := http2.ConfigureTransports(t)
++	t2, err := http2.ConfigureTransport(t)
+ 	if err != nil {
+ 		return err
+ 	}
