@@ -49,8 +49,6 @@ http_archive(
     urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/releases/download/4.5.0/rules_proto_grpc-4.5.0.tar.gz"],
 )
 
-
-
 git_repository(
     name = "com_github_grpc_grpc",
     patch_args = [
@@ -85,16 +83,16 @@ git_repository(
 
 git_repository(
     name = "com_google_googleapis",
-    commit = "6e1a5a066659794f26091674e3668229e7750052",
+    commit = "90a53d6d1c1c1854e73f390a7701069dc6da8146",
     remote = "https://github.com/googleapis/googleapis",
-    shallow_since = "1668013046 -0800",
+    shallow_since = "1699043870 -0700",
 )
 
 git_repository(
     name = "googleapis",
-    commit = "6e1a5a066659794f26091674e3668229e7750052",
+    commit = "90a53d6d1c1c1854e73f390a7701069dc6da8146",
     remote = "https://github.com/googleapis/googleapis",
-    shallow_since = "1668013046 -0800",
+    shallow_since = "1699043870 -0700",
 )
 
 http_archive(
@@ -118,12 +116,16 @@ load("//third-party/cpp:repos.bzl", "cpp_repos")
 
 cpp_repos()
 
-load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_proto_grpc_toolchains")
+
 rules_proto_grpc_toolchains()
+
 rules_proto_grpc_repos()
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
 rules_proto_dependencies()
+
 rules_proto_toolchains()
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps", "grpc_test_only_deps")

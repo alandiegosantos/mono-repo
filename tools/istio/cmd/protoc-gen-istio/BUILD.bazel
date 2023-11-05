@@ -14,10 +14,13 @@ go_library(
         "@io_istio_api//networking/v1beta1:go_default_library",
         "@io_k8s_cli_runtime//pkg/printers:go_default_library",
         "@org_golang_google_protobuf//compiler/protogen:go_default_library",
+        "@org_golang_google_protobuf//proto:go_default_library",
+        "@org_golang_google_protobuf//types/descriptorpb:go_default_library",
         "@org_golang_google_protobuf//types/pluginpb:go_default_library",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/runtime/serializer/json:go_default_library",
         "@io_k8s_apimachinery//pkg/runtime",
+        "//proto/servicemesh:servicemesh_go",
 
     ],
 )

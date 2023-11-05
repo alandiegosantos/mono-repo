@@ -15,6 +15,7 @@ GO_COMPILERS = [
 PROTO_ANNOTATIONS_DEPS = [
     "@googleapis//google/api:annotations_proto",
     "@com_google_protobuf//:any_proto",
+    "//proto/servicemesh:annotations_proto",
 ]
 
 GO_WORKSPACE_NAME = "github.com/alandiegosantos/monorepo"
@@ -49,7 +50,7 @@ def grpc_library(name, srcs, languages = [], deps = [], visibility=None):
         visibility = visibility,
     )
 
-    # _go_grpc_library(name, [name + "_proto"], _process_dependencies(deps, "_go"), visibility)
+    _go_grpc_library(name, [name + "_proto"], _process_dependencies(deps, "_go"), visibility)
     _cc_grpc_library(name, srcs, _process_dependencies(deps, "_cpp"), visibility)
     _istio_grpc_library(name, srcs, deps, visibility)
 
