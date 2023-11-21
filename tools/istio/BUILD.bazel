@@ -1,19 +1,6 @@
-load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
-load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER")
-
 package(default_visibility = ["//visibility:public"])
 
 sh_binary(
     name = "install-istio-operator",
     srcs = ["install_istio_operator.sh"],
-)
-
-k8s_deploy(
-    name = "default",
-    cluster = CLUSTER,
-    manifests = [
-        "istio-operator-default.yaml",
-    ],
-    namespace = "istio-system",
-    user = USER,
 )

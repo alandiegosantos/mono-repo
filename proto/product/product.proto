@@ -11,6 +11,7 @@ package product;
 import "google/api/annotations.proto";
 import "proto/detail/detail.proto";
 import "proto/review/review.proto";
+import "proto/servicemesh/annotations.proto";
 
 message ProductRequest {
   string id = 1;
@@ -23,9 +24,14 @@ message Product {
 }
 
 service ProductService {
+  option (servicemesh.service) = {
+    host: "detail.services.svc.cluster.local",
+    port: 50050,
+  };
   rpc GetProduct (ProductRequest) returns (Product) {
     option (google.api.http) = {
 			get: "/v1/product/{id}"
 		};
+    option (servicemesh.route).timeout="test";
   }
 }

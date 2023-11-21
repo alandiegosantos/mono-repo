@@ -1,5 +1,5 @@
 load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
-load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER")
+load("@monorepo_k8s_config//:config.bzl", "CLUSTER", "USER")
 
 package(default_visibility = ["//visibility:public"])
 

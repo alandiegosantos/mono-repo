@@ -5,12 +5,11 @@ package(default_visibility = ["//visibility:public"])
 go_library(
     name = "handler",
     srcs = ["products.go"],
-    importpath = "github.com/alandiegosantos/monorepo/services/product/pkg/handler",
+    importpath = "",
     deps = [
-        "//proto/detail:go",
-        "//proto/product:go",
-        "//proto/rating:go",
-        "//proto/review:go",
+        "//proto/detail:detail_go_proto",
+        "//proto/product:product_go_proto",
+        "@com_github_alandiegosantos_monorepo//proto/review:go_default_library",
         "@com_github_pkg_errors//:go_default_library",
         "@org_golang_google_grpc//:go_default_library",
     ],

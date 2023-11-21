@@ -1,0 +1,40 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_proto_grpc//:defs.bzl", "proto_plugin")
+
+go_library(
+    name = "lib",
+    srcs = [
+        "istio.go",
+        "main.go",
+    ],
+    importpath = "",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@io_istio_client_go//pkg/apis/networking/v1beta1:go_default_library",
+        "@io_istio_api//networking/v1beta1:go_default_library",
+        "@io_k8s_cli_runtime//pkg/printers:go_default_library",
+        "@org_golang_google_protobuf//compiler/protogen:go_default_library",
+        "@org_golang_google_protobuf//proto:go_default_library",
+        "@org_golang_google_protobuf//types/descriptorpb:go_default_library",
+        "@org_golang_google_protobuf//types/pluginpb:go_default_library",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/serializer/json:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime",
+        "//proto/servicemesh:servicemesh_go",
+
+    ],
+)
+
+go_binary(
+    name = "protoc-gen-istio",
+    embed = [":lib"],
+    visibility = ["//visibility:public"],
+)
+
+proto_plugin(
+    name = "protoc-gen-istio-plugin",
+    outputs = ["{protopath}_istio.yaml"],  # {protopath} gets replaced with relative path to each .proto file
+    tool = ":protoc-gen-istio",  # Point this at your plugin binary target, use select if desired
+    visibility = ["//visibility:public"],
+)
+

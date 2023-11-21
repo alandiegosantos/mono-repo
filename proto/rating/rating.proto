@@ -6,6 +6,7 @@ option java_outer_classname = "RatingProto";
 option objc_class_prefix = "GTR";
 option go_package = "github.com/alandiegosantos/monorepo/proto/rating";
 
+
 package rating;
 
 message RatingRequest {

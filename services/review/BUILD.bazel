@@ -1,7 +1,5 @@
-load("@io_bazel_rules_docker//java:image.bzl", "java_image")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
-load("//third-party/docker:image.bzl","JAVA_DEFAULT_BASE")
-load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER","REGISTRY")
+load("//third-party/docker:image.bzl", "JAVA_DEFAULT_BASE")
+load("@monorepo_k8s_config//:config.bzl", "CLUSTER", "REGISTRY", "USER")
 load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
 
 package(default_visibility = ["//visibility:public"])
@@ -24,10 +22,6 @@ java_library(
         "//proto/review:java_proto",
         "@com_google_protobuf//:protobuf_java",
         "@com_google_protobuf//:protobuf_java_util",
-        "@maven//:io_netty_netty_all",
-        "@maven//:io_netty_netty_transport",
-        "@maven//:io_netty_netty_transport_native_epoll_linux_aarch_64",
-        "@maven//:io_netty_netty_transport_native_unix_common",
         "@io_grpc_grpc_java//api",
         "@io_grpc_grpc_java//netty:shaded_maven",
         "@io_grpc_grpc_java//protobuf",
@@ -36,6 +30,10 @@ java_library(
         "@io_grpc_grpc_java//stub",
         "@io_grpc_grpc_java//xds",
         "@io_grpc_grpc_proto//:health_java_proto",
+        "@maven//:io_netty_netty_all",
+        "@maven//:io_netty_netty_transport",
+        "@maven//:io_netty_netty_transport_native_epoll_linux_aarch_64",
+        "@maven//:io_netty_netty_transport_native_unix_common",
     ],
 )
 
@@ -47,27 +45,18 @@ java_binary(
     ],
 )
 
-java_image(
-    name = "image",
-    base = JAVA_DEFAULT_BASE,
-    main_class = "com.github.alandiegosantos.monorepo.services.review.GrpcServer",
-    runtime_deps = [
-        ":server_lib",
-    ],
-)
-
 alias(
-    name="image.push",
-    actual = "//services/review/k8s:services_review_image_" + REGISTRY.replace(":","_") + "_image.push",
+    name = "image.push",
+    actual = "//services/review/k8s:services_review_image_" + REGISTRY.replace(":", "_") + "_image.push",
 )
 
 k8s_deploy(
     name = "register_argocd",
     cluster = CLUSTER,
-    manifests = ["argocd.yaml"],
     common_labels = {
         "app": "review",
     },
+    manifests = ["argocd.yaml"],
     namespace = "argocd",
     user = USER,
 )

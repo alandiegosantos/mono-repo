@@ -1,3 +1,4 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@io_bazel_rules_go//proto:compiler.bzl", "go_proto_compiler")
 
@@ -12,12 +13,15 @@ gazelle(
     command = "update-repos",
 )
 
+# gazelle:prefix github.com/alandiegosantos/monorepo
+gazelle(name = "gentargets")
+
 go_proto_compiler(
     name = "protoc-gen-go-grpc",
     options = [
         "paths=source_relative",
     ],
-    plugin = "@com_github_grpc_grpc_go//cmd/protoc-gen-go-grpc:protoc-gen-go-grpc",
+    plugin = "@org_golang_google_grpc_cmd_protoc_gen_go_grpc//:protoc-gen-go-grpc",
     suffix = "_grpc.pb.go",
     visibility = ["//visibility:public"],
     deps = [

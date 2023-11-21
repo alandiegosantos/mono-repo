@@ -1,4 +1,4 @@
-load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER","REGISTRY")
+load("@monorepo_k8s_config//:config.bzl", "CLUSTER", "REGISTRY", "USER")
 load("@com_adobe_rules_gitops//gitops:defs.bzl", "k8s_deploy")
 
 package(default_visibility = ["//visibility:public"])
@@ -6,14 +6,14 @@ package(default_visibility = ["//visibility:public"])
 k8s_deploy(
     name = "release",
     cluster = CLUSTER,
+    common_labels = {
+        "app": "review",
+    },
     image_registry = REGISTRY,  # override the default registry host for developent
     images = {
         "image": "//services/review:image",
     },
     manifests = glob(["*.yaml"]),
-    common_labels = {
-        "app": "review",
-    },
     namespace = "services",
     user = USER,
 )
