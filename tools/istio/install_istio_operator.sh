@@ -2,7 +2,7 @@
 
 set -eux
 
-ISTIO_VERSION=1.17.2
+ISTIO_VERSION=1.19.3
 
 TMP_PATH=$(mktemp -d)
 

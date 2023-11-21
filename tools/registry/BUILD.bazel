@@ -1,6 +1,6 @@
 load("//tools/certs:generate.bzl", "generate_certificate")
 load("@com_adobe_rules_gitops//gitops:defs.bzl", "external_image", "k8s_deploy")
-load("@monorepo_k8s_config//:config.bzl","CLUSTER","USER","REGISTRY")
+load("@monorepo_k8s_config//:config.bzl", "CLUSTER", "REGISTRY", "USER")
 
 generate_certificate(
     name = "registry_cert",
@@ -18,15 +18,15 @@ external_image(
 k8s_deploy(
     name = "deploy",
     cluster = CLUSTER,
+    configmaps_renaming = "hash",
     image_registry = REGISTRY,
     images = [
         ":image",
     ],
     manifests = glob(["manifests/*.yaml"]),
     namespace = "infra",
-    user = USER,
-    configmaps_renaming = 'hash',
     secrets_srcs = [
         ":registry_cert",
     ],
+    user = USER,
 )

@@ -13,8 +13,8 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/xds"
 	xdscreds "google.golang.org/grpc/credentials/xds"
+	"google.golang.org/grpc/xds"
 
 	_ "google.golang.org/grpc/grpclog/glogger"
 

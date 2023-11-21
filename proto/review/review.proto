@@ -6,6 +6,7 @@ option java_outer_classname = "ReviewProto";
 option objc_class_prefix = "GTR";
 option go_package = "github.com/alandiegosantos/monorepo/proto/review";
 
+
 package review;
 
 import "proto/rating/rating.proto";
